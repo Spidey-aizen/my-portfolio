@@ -1,7 +1,51 @@
 @import "tailwindcss";
+@source "../src"; /* This tells Tailwind to scan the src folder for classes */
+
+@theme {
+  --font-sans: "Inter", "system-ui", "sans-serif";
+}
+
+/* Fix for the Sideways Layout */
+:root {
+  overflow: hidden;
+  background-color: #000814; /* Default to dark so no white flash */
+}
+
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Hide scrollbars */
+::-webkit-scrollbar {
+  display: none;
+}
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&display=swap');
 
 body {
-  margin: 0;
-  background-color: #020617;
-  color: white;
+  font-family: 'Fira Code', monospace;
+  background-color: #05070a;
+}
+
+/* Adds a hacker glow to your main green text */
+.text-emerald-500 {
+  text-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
+}
+
+/* Subtle scanline overlay effect */
+body::after {
+  content: " ";
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 118, 0.03));
+  z-index: 1000;
+  background-size: 100% 2px, 3px 100%;
+  pointer-events: none;
 }
