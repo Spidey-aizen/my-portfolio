@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Sun, Moon, Download } from 'lucide-react';
 
-// PAGE IMPORTS
 import Home from "./pages/Home";
 import Skills from "./pages/Skills";
 import Projects from "./pages/Projects"; 
@@ -17,7 +16,6 @@ export default function App() {
   const [activeTab, setActiveTab] = useState('HOME');
   const isDark = theme === 'dark';
 
-  // SWIPE LOGIC
   const handleSwipe = (direction) => {
     const currentIndex = TABS.indexOf(activeTab);
     if (direction === 'left' && currentIndex < TABS.length - 1) setActiveTab(TABS[currentIndex + 1]);
@@ -28,7 +26,6 @@ export default function App() {
     <div className={`h-screen w-screen overflow-hidden transition-colors duration-700 font-mono ${isDark ? 'bg-[#05070a] text-white' : 'bg-[#fffaf5] text-slate-900'}`}>
       <MatrixBackground isDark={isDark} />
       
-      {/* VIGNETTE MASK */}
       <div className={`fixed inset-0 pointer-events-none z-1 ${isDark ? 'bg-[radial-gradient(circle_at_center,transparent_30%,rgba(5,7,10,0.7)_100%)]' : 'bg-[radial-gradient(circle_at_center,transparent_50%,rgba(255,250,245,0.15)_100%)]'}`} />
 
       <header className="fixed top-0 left-0 w-full z-[100] p-8 flex justify-between items-start pointer-events-auto">
@@ -50,18 +47,27 @@ export default function App() {
         </button>
       </header>
 
-      {/* DRAG CONTAINER FOR SWIPING */}
+      {/* SWIPE CONTAINER FIX: added touch-none */}
       <motion.main 
         drag="x"
         dragConstraints={{ left: 0, right: 0 }}
-        onDragEnd={(e, { offset }) => {
-          if (offset.x < -50) handleSwipe('left');
-          else if (offset.x > 50) handleSwipe('right');
+        dragElastic={0.2}
+        onDragEnd={(e, { offset, velocity }) => {
+          const swipe = offset.x;
+          if (swipe < -100 || velocity.x < -500) handleSwipe('left');
+          else if (swipe > 100 || velocity.x > 500) handleSwipe('right');
         }}
-        className="h-full w-full flex items-center justify-center pt-24 pb-44 px-10 relative z-10 cursor-grab active:cursor-grabbing"
+        className="h-full w-full flex items-center justify-center pt-24 pb-44 px-10 relative z-10 cursor-grab active:cursor-grabbing touch-none"
       >
         <AnimatePresence mode="wait">
-          <motion.div key={activeTab} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="w-full flex justify-center">
+          <motion.div 
+            key={activeTab} 
+            initial={{ opacity: 0, x: 50 }} 
+            animate={{ opacity: 1, x: 0 }} 
+            exit={{ opacity: 0, x: -50 }} 
+            transition={{ duration: 0.3 }}
+            className="w-full flex justify-center"
+          >
             {activeTab === 'HOME' && <Home isDark={isDark} />}
             {activeTab === 'SKILLS' && <Skills isDark={isDark} />}
             {activeTab === 'PROJECTS' && <Projects isDark={isDark} />}
@@ -70,17 +76,6 @@ export default function App() {
           </motion.div>
         </AnimatePresence>
       </motion.main>
-
-      <AnimatePresence>
-        {activeTab === 'ABOUT' && (
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 20 }} className="fixed bottom-24 w-full flex justify-center z-50 pointer-events-none">
-            <a href="Prasanna_CV.pdf" download className={`pointer-events-auto px-10 py-4 rounded-2xl border-2 flex items-center gap-4 shadow-2xl transition-all ${isDark ? 'border-emerald-500/50 bg-black/90 text-emerald-400' : 'border-slate-900 bg-white text-slate-900'}`}>
-              <span className="text-sm font-black uppercase tracking-wider">Download CV</span>
-              <Download size={24} className="animate-bounce" />
-            </a>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 }
